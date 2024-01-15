@@ -14,7 +14,6 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 30),
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),

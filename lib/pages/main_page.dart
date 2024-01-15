@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
+import 'package:superheroes/pages/favorites_page.dart';
+import 'package:superheroes/pages/loading_error_page.dart';
 import 'package:superheroes/pages/min_symbols_page.dart';
 import 'package:superheroes/pages/no_favorites_page.dart';
+import 'package:superheroes/pages/nothing_found_page.dart';
+import 'package:superheroes/pages/search_results_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/widgets/action_button.dart';
 
@@ -52,9 +56,12 @@ class MainPageContent extends StatelessWidget {
         const MainPageStateWidget(),
         Align(
           alignment: Alignment.bottomCenter,
-          child: ActionButton(
-            text: 'Next state',
-            action: bloc.nextState,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: ActionButton(
+              text: 'Next state',
+              action: bloc.nextState,
+            ),
           ),
         ),
       ],
@@ -82,10 +89,14 @@ class MainPageStateWidget extends StatelessWidget {
             return const MinSymbolsPage();
           case MainPageState.noFavorites:
             return const NoFavoritesPage();
-          case MainPageState.nothingFound:
-          case MainPageState.loadingError:
-          case MainPageState.searchResults:
           case MainPageState.favorites:
+            return const FavoritesPage();
+          case MainPageState.searchResults:
+            return const SearchResultsPage();
+          case MainPageState.nothingFound:
+            return const NothingFoundPage();
+          case MainPageState.loadingError:
+            return const LoadingErrorPage();
           default:
             return Center(
               child: Text(
