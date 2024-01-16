@@ -24,10 +24,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Provider.value(
       value: bloc,
-      child: Scaffold(
+      child: const Scaffold(
         backgroundColor: SuperheroesColors.background,
         body: SafeArea(
-          child: MainPageContent(bloc: bloc),
+          child: MainPageContent(),
         ),
       ),
     );
@@ -41,12 +41,7 @@ class _MainPageState extends State<MainPage> {
 }
 
 class MainPageContent extends StatelessWidget {
-  final MainBloc bloc;
-
-  const MainPageContent({
-    super.key,
-    required this.bloc,
-  });
+  const MainPageContent({super.key});
 
   @override
   Widget build(BuildContext context) {
