@@ -19,7 +19,7 @@ class SearchResultsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 114),
+            const SizedBox(height: 90),
             const Text(
               'Search results',
               style: TextStyle(

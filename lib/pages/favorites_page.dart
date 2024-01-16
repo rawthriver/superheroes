@@ -14,36 +14,42 @@ class FavoritesPage extends StatelessWidget {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 114),
-            const Text(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 90),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
               'Your favorites',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.w800,
                 color: SuperheroesColors.text,
               ),
             ),
-            const SizedBox(height: 20),
-            SuperheroCard(
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SuperheroCard(
               name: 'Batman',
               realName: 'Bruce Wayne',
               imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/639.jpg',
               action: openSuperHeroPage('Batman'),
             ),
-            const SizedBox(height: 8),
-            SuperheroCard(
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SuperheroCard(
               name: 'Ironman',
               realName: 'Tony Stark',
               imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/85.jpg',
               action: openSuperHeroPage('Ironman'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

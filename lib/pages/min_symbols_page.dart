@@ -8,14 +8,18 @@ class MinSymbolsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Container(
-        margin: const EdgeInsets.only(top: 134),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: const Text(
-          'Enter at least 3 symbols',
-          style: TextStyle(
-            fontSize: 20,
-            color: SuperheroesColors.text,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 110, left: 16, right: 16),
+        child: Container(
+          //margin: const EdgeInsets.only(top: 134),
+          //padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: const Text(
+            'Enter at least 3 symbols',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: SuperheroesColors.text,
+            ),
           ),
         ),
       ),

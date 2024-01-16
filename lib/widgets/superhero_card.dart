@@ -53,7 +53,7 @@ class SuperheroCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 28),
+          //const SizedBox(width: 28),
         ]),
       ),
     );
