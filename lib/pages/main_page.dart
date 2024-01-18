@@ -9,6 +9,7 @@ import 'package:superheroes/pages/nothing_found_page.dart';
 import 'package:superheroes/pages/search_results_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/widgets/action_button.dart';
+import 'package:superheroes/widgets/search_widget.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -45,7 +46,7 @@ class MainPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MainBloc bloc = Provider.of<MainBloc>(context);
+    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return Stack(
       children: [
         const MainPageStateWidget(),
@@ -59,6 +60,10 @@ class MainPageContent extends StatelessWidget {
             ),
           ),
         ),
+        const Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, top: 12),
+          child: SearchWidget(),
+        ),
       ],
     );
   }
@@ -69,7 +74,7 @@ class MainPageStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MainBloc bloc = Provider.of<MainBloc>(context);
+    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return StreamBuilder<MainPageState>(
       stream: bloc.observeMainPageState(),
       builder: (context, snapshot) {
