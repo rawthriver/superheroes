@@ -24,8 +24,7 @@ class InfoWithButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -33,7 +32,10 @@ class InfoWithButton extends StatelessWidget {
             alignment: Alignment.topCenter,
             children: [
               Container(
-                decoration: const BoxDecoration(color: SuperheroesColors.main, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: SuperheroesColors.main,
+                  shape: BoxShape.circle,
+                ),
                 width: 108,
                 height: 108,
               ),

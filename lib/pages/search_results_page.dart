@@ -15,7 +15,7 @@ class SearchResultsPage extends StatelessWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16), //better than 3 paddings
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -23,7 +23,7 @@ class SearchResultsPage extends StatelessWidget {
             const Text(
               'Search results',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: FontWeight.w800,
                 color: SuperheroesColors.text,
               ),

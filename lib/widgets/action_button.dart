@@ -17,8 +17,8 @@ class ActionButton extends StatelessWidget {
       onTap: action,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
           color: SuperheroesColors.main,
         ),
         child: Text(

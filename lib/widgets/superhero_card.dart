@@ -5,14 +5,14 @@ class SuperheroCard extends StatelessWidget {
   final String name;
   final String realName;
   final String imageUrl;
-  final VoidCallback? action;
+  final VoidCallback action;
 
   const SuperheroCard({
     super.key,
     required this.name,
     required this.realName,
     required this.imageUrl,
-    this.action,
+    required this.action,
   });
 
   @override
@@ -20,8 +20,12 @@ class SuperheroCard extends StatelessWidget {
     return GestureDetector(
       onTap: action,
       child: Container(
-        color: SuperheroesColors.card,
         height: 70,
+        decoration: BoxDecoration(
+          color: SuperheroesColors.card,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        clipBehavior: Clip.antiAlias,
         child: Row(children: [
           Image.network(
             imageUrl,
