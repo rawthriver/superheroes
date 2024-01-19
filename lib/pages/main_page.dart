@@ -10,6 +10,7 @@ import 'package:superheroes/pages/search_results_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/widgets/action_button.dart';
 import 'package:superheroes/widgets/search_widget.dart';
+import 'package:superheroes/widgets/superheroes_list.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -90,9 +91,16 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.noFavorites:
             return const NoFavoritesPage();
           case MainPageState.favorites:
-            return const FavoritesPage();
+            return SuperheroesList(
+              title: 'Your favorites',
+              stream: bloc.observeFavorites(),
+            );
           case MainPageState.searchResults:
-            return const SearchResultsPage();
+            // return const SearchResultsPage();
+            return SuperheroesList(
+              title: 'Search results',
+              stream: bloc.observeSearched(),
+            );
           case MainPageState.nothingFound:
             return const NothingFoundPage();
           case MainPageState.loadingError:

@@ -19,8 +19,11 @@ class MainBloc {
   Stream<List<SuperheroInfo>> observeSearched() => searchedSuperheroesSubject;
 
   MainBloc() {
+    // initial page
     stateSubject.add(MainPageState.noFavorites);
+    // listen for input events
     textSubscription = currentTextSubject.listen((value) {
+      // debounce
       searchSubscription?.cancel();
       if (value.isEmpty) {
         stateSubject.add(MainPageState.favorites);

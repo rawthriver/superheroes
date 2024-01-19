@@ -25,7 +25,6 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return TextField(
       style: const TextStyle(
         fontSize: 20,
@@ -63,7 +62,6 @@ class _SearchWidgetState extends State<SearchWidget> {
           ),
         ),
       ),
-      onChanged: (value) => bloc.updateSearchText(value),
       controller: controller,
     );
   }
