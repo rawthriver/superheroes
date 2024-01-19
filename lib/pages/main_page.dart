@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
-import 'package:superheroes/pages/favorites_page.dart';
 import 'package:superheroes/pages/loading_error_page.dart';
 import 'package:superheroes/pages/min_symbols_page.dart';
 import 'package:superheroes/pages/no_favorites_page.dart';
 import 'package:superheroes/pages/nothing_found_page.dart';
-import 'package:superheroes/pages/search_results_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
-import 'package:superheroes/widgets/action_button.dart';
 import 'package:superheroes/widgets/search_widget.dart';
 import 'package:superheroes/widgets/superheroes_list.dart';
 
@@ -47,21 +44,10 @@ class MainPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-    return Stack(
+    return const Stack(
       children: [
-        const MainPageStateWidget(),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: ActionButton(
-              text: 'Next state',
-              action: bloc.nextState,
-            ),
-          ),
-        ),
-        const Padding(
+        MainPageStateWidget(),
+        Padding(
           padding: EdgeInsets.only(left: 16, right: 16, top: 12),
           child: SearchWidget(),
         ),
@@ -91,6 +77,7 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.noFavorites:
             return const NoFavoritesPage();
           case MainPageState.favorites:
+            // return const FavoritesPage();
             return SuperheroesList(
               title: 'Your favorites',
               stream: bloc.observeFavorites(),

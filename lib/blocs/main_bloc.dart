@@ -22,8 +22,7 @@ class MainBloc {
     // initial page
     stateSubject.add(MainPageState.noFavorites);
     // listen for input events
-    textSubscription = currentTextSubject.listen((value) {
-      // debounce
+    textSubscription = currentTextSubject.distinct().debounceTime(const Duration(seconds: 1)).listen((value) {
       searchSubscription?.cancel();
       if (value.isEmpty) {
         stateSubject.add(MainPageState.favorites);
