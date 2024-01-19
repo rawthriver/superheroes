@@ -38,13 +38,13 @@ class SuperheroesList extends StatelessWidget {
                 ),
               );
             } else {
-              final hero = list[index - 1];
+              final item = list[index - 1];
               return SuperheroCard(
-                name: hero.name,
-                realName: hero.realName,
-                imageUrl: hero.imageUrl,
+                name: item.name,
+                realName: item.realName,
+                imageUrl: item.imageUrl,
                 action: () =>
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(name: hero.name))),
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(name: item.name))),
               );
             }
           },

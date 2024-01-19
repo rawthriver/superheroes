@@ -7,7 +7,8 @@ class MainBloc {
   static const int minSymbols = 3;
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
-  final BehaviorSubject<List<SuperheroInfo>> favoriteSuperheroesSubject = BehaviorSubject.seeded(SuperheroInfo.mocked);
+  final BehaviorSubject<List<SuperheroInfo>> favoriteSuperheroesSubject =
+      BehaviorSubject(); //.seeded(SuperheroInfo.mocked);
   final BehaviorSubject<List<SuperheroInfo>> searchedSuperheroesSubject = BehaviorSubject();
   final BehaviorSubject<String> currentTextSubject = BehaviorSubject.seeded('');
 
@@ -22,14 +23,18 @@ class MainBloc {
     // initial page
     stateSubject.add(MainPageState.noFavorites);
     // listen for input events
-    textSubscription = currentTextSubject.distinct().debounceTime(const Duration(seconds: 1)).listen((value) {
+    textSubscription = currentTextSubject.distinct().debounceTime(const Duration(seconds: 1)).listen((text) {
+      // print('Text = $text');
       searchSubscription?.cancel();
-      if (value.isEmpty) {
-        stateSubject.add(MainPageState.favorites);
-      } else if (value.length < minSymbols) {
+      if (text.isEmpty) {
+        // alternative to combining streams
+        stateSubject.add(favoriteSuperheroesSubject.hasValue && favoriteSuperheroesSubject.value.isNotEmpty
+            ? MainPageState.favorites
+            : MainPageState.noFavorites);
+      } else if (text.length < minSymbols) {
         stateSubject.add(MainPageState.minSymbols);
       } else {
-        _searchForSuperheroes(value);
+        _searchForSuperheroes(text);
       }
     });
   }

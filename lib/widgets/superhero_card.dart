@@ -21,6 +21,7 @@ class SuperheroCard extends StatelessWidget {
       onTap: action,
       child: Container(
         height: 70,
+        margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: SuperheroesColors.card,
           borderRadius: BorderRadius.circular(8),
