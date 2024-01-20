@@ -34,8 +34,7 @@ void runTestLesson1Task5() {
         fontWeight: FontWeight.w800,
       );
 
-      final columnFinder =
-          findTypeByTextOnlyInParentType(Column, "Your favorites", MainPageStateWidget);
+      final columnFinder = findTypeByTextOnlyInParentType(Column, "Your favorites", MainPageStateWidget);
 
       expect(
         columnFinder,
@@ -68,8 +67,7 @@ void runTestLesson1Task5() {
         edgeInsetsCheck: EdgeInsetsCheck(left: 16, right: 16),
       );
 
-      final batmanCardFinder =
-          findTypeByTextOnlyInParentType(SuperheroCard, "BATMAN", MainPageStateWidget);
+      final batmanCardFinder = findTypeByTextOnlyInParentType(SuperheroCard, "BATMAN", MainPageStateWidget);
 
       expect(
         batmanCardFinder,
@@ -79,18 +77,18 @@ void runTestLesson1Task5() {
 
       final SuperheroCard batmanCard = tester.widget(batmanCardFinder);
       expect(
-        batmanCard.name,
+        batmanCard.info.name,
         "Batman",
         reason: "SuperheroCard with Batman should have 'Batman' as a name parameter",
       );
       expect(
-        batmanCard.realName,
+        batmanCard.info.realName,
         "Bruce Wayne",
         reason: "SuperheroCard with Batman should have 'Bruce Wayne' as a realName parameter",
       );
       final batmanUrl = "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg";
       expect(
-        batmanCard.imageUrl,
+        batmanCard.info.imageUrl,
         batmanUrl,
         reason: "SuperheroCard with Batman should have '$batmanUrl' as an imageUrl parameter",
       );
@@ -118,8 +116,7 @@ void runTestLesson1Task5() {
       );
       // --------------?
 
-      final ironmanCardFinder =
-          findTypeByTextOnlyInParentType(SuperheroCard, "IRONMAN", MainPageStateWidget);
+      final ironmanCardFinder = findTypeByTextOnlyInParentType(SuperheroCard, "IRONMAN", MainPageStateWidget);
 
       expect(
         ironmanCardFinder,
@@ -129,18 +126,18 @@ void runTestLesson1Task5() {
 
       final SuperheroCard ironmanCard = tester.widget(ironmanCardFinder);
       expect(
-        ironmanCard.name,
+        ironmanCard.info.name,
         "Ironman",
         reason: "SuperheroCard with Batman should have 'Ironman' as a name parameter",
       );
       expect(
-        ironmanCard.realName,
+        ironmanCard.info.realName,
         "Tony Stark",
         reason: "SuperheroCard with Batman should have 'Tony Stark' as a realName parameter",
       );
       final ironmanUrl = "https://www.superherodb.com/pictures2/portraits/10/100/85.jpg";
       expect(
-        ironmanCard.imageUrl,
+        ironmanCard.info.imageUrl,
         ironmanUrl,
         reason: "SuperheroCard with Batman should have '$ironmanUrl' as an imageUrl parameter",
       );
@@ -257,14 +254,12 @@ void runTestLesson1Task5() {
       expect(
         columnInsideSuperheroCard.crossAxisAlignment,
         CrossAxisAlignment.start,
-        reason:
-            "Column inside SuperheroCard should have crossAxisAlignment = CrossAxisAlignment.start",
+        reason: "Column inside SuperheroCard should have crossAxisAlignment = CrossAxisAlignment.start",
       );
       expect(
         columnInsideSuperheroCard.mainAxisAlignment,
         MainAxisAlignment.center,
-        reason:
-            "Column inside SuperheroCard should have mainAxisAlignment = MainAxisAlignment.center",
+        reason: "Column inside SuperheroCard should have mainAxisAlignment = MainAxisAlignment.center",
       );
 
       expect(

@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 
 class SuperheroCard extends StatelessWidget {
-  final String name;
-  final String realName;
-  final String imageUrl;
+  final SuperheroInfo info;
   final VoidCallback action;
 
   const SuperheroCard({
     super.key,
-    required this.name,
-    required this.realName,
-    required this.imageUrl,
+    required this.info,
     required this.action,
   });
 
@@ -29,7 +26,7 @@ class SuperheroCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Row(children: [
           Image.network(
-            imageUrl,
+            info.imageUrl,
             width: 70,
             height: 70,
             fit: BoxFit.cover,
@@ -41,7 +38,7 @@ class SuperheroCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name.toUpperCase(),
+                  info.name.toUpperCase(),
                   style: const TextStyle(
                     color: SuperheroesColors.text,
                     fontSize: 16,
@@ -49,7 +46,7 @@ class SuperheroCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  realName,
+                  info.realName,
                   style: const TextStyle(
                     color: SuperheroesColors.text,
                     fontSize: 14,
@@ -58,7 +55,6 @@ class SuperheroCard extends StatelessWidget {
               ],
             ),
           ),
-          //const SizedBox(width: 28),
         ]),
       ),
     );

@@ -7,8 +7,7 @@ class MainBloc {
   static const int minSymbols = 3;
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
-  final BehaviorSubject<List<SuperheroInfo>> favoriteSuperheroesSubject =
-      BehaviorSubject(); //.seeded(SuperheroInfo.mocked);
+  final BehaviorSubject<List<SuperheroInfo>> favoriteSuperheroesSubject = BehaviorSubject.seeded(SuperheroInfo.mocked);
   final BehaviorSubject<List<SuperheroInfo>> searchedSuperheroesSubject = BehaviorSubject();
   final BehaviorSubject<String> currentTextSubject = BehaviorSubject.seeded('');
 
@@ -41,7 +40,8 @@ class MainBloc {
 
   Future<List<SuperheroInfo>> search(final String text) async {
     await Future.delayed(const Duration(seconds: 2));
-    return SuperheroInfo.mocked.reversed.toList();
+    var s = text.toLowerCase();
+    return SuperheroInfo.mocked.where((item) => item.name.toLowerCase().contains(s)).toList();
   }
 
   void _searchForSuperheroes(final String text) {
@@ -58,15 +58,17 @@ class MainBloc {
     });
   }
 
-  void nextState() {
-    final currentState = stateSubject.value;
-    final MainPageState nextState =
-        MainPageState.values[(MainPageState.values.indexOf(currentState) + 1) % MainPageState.values.length];
-    stateSubject.add(nextState);
-  }
-
   void updateSearchText(final String? text) {
     currentTextSubject.add(text ?? '');
+  }
+
+  void removeFavorite() {
+    if (favoriteSuperheroesSubject.hasValue && favoriteSuperheroesSubject.value.isNotEmpty) {
+      favoriteSuperheroesSubject.add(favoriteSuperheroesSubject.value.toList()..removeLast());
+      // if (favoriteSuperheroesSubject.value.isEmpty) stateSubject.add(MainPageState.noFavorites);
+    } else {
+      favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
+    }
   }
 
   void dispose() {

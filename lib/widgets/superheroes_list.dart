@@ -40,9 +40,7 @@ class SuperheroesList extends StatelessWidget {
             } else {
               final item = list[index - 1];
               return SuperheroCard(
-                name: item.name,
-                realName: item.realName,
-                imageUrl: item.imageUrl,
+                info: item,
                 action: () =>
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(name: item.name))),
               );
@@ -50,6 +48,7 @@ class SuperheroesList extends StatelessWidget {
           },
           separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemCount: list.length + 1,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         );
       },
     );
