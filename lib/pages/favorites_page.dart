@@ -22,7 +22,7 @@ class FavoritesPage extends StatelessWidget {
             ),
           ),
           ActionButton(
-            text: 'Remove'.toUpperCase(),
+            text: 'Remove',
             action: bloc.removeFavorite,
           ),
           const SizedBox(height: 30),

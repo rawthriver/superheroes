@@ -12,8 +12,8 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> with StateDelayedInit {
-  late TextEditingController controller;
-  late FocusNode focus;
+  late final TextEditingController controller;
+  late final FocusNode focus;
 
   @override
   void initState() {

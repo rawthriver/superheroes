@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
 
+//API key: 7030337270418237
+
 class MainBloc {
   static const int minSymbols = 3;
 
@@ -22,24 +24,28 @@ class MainBloc {
     // initial page
     stateSubject.add(MainPageState.noFavorites);
     // listen for input events
-    textSubscription = currentTextSubject.distinct().debounceTime(const Duration(seconds: 1)).listen((text) {
+    textSubscription = Rx.combineLatest2(
+        currentTextSubject.distinct().debounceTime(const Duration(milliseconds: 500)),
+        favoriteSuperheroesSubject,
+        (text, favorites) => MainPageStateInfo(searchText: text, hasFavorites: favorites.isNotEmpty)).listen((value) {
       // print('Text = $text');
       searchSubscription?.cancel();
-      if (text.isEmpty) {
+      if (value.searchText.isEmpty) {
         // alternative to combining streams
-        stateSubject.add(favoriteSuperheroesSubject.hasValue && favoriteSuperheroesSubject.value.isNotEmpty
-            ? MainPageState.favorites
-            : MainPageState.noFavorites);
-      } else if (text.length < minSymbols) {
+        // stateSubject.add(favoriteSuperheroesSubject.hasValue && favoriteSuperheroesSubject.value.isNotEmpty
+        //     ? MainPageState.favorites
+        //     : MainPageState.noFavorites);
+        stateSubject.add(value.hasFavorites ? MainPageState.favorites : MainPageState.noFavorites);
+      } else if (value.searchText.length < minSymbols) {
         stateSubject.add(MainPageState.minSymbols);
       } else {
-        _searchForSuperheroes(text);
+        _searchForSuperheroes(value.searchText);
       }
     });
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     var s = text.toLowerCase();
     return SuperheroInfo.mocked.where((item) => item.name.toLowerCase().contains(s)).toList();
   }
@@ -128,4 +134,24 @@ class SuperheroInfo {
       imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/22.jpg',
     ),
   ];
+}
+
+class MainPageStateInfo {
+  final String searchText;
+  final bool hasFavorites;
+
+  const MainPageStateInfo({
+    required this.searchText,
+    required this.hasFavorites,
+  });
+
+  @override
+  bool operator ==(covariant MainPageStateInfo other) {
+    if (identical(this, other)) return true;
+
+    return other.searchText == searchText && other.hasFavorites == hasFavorites;
+  }
+
+  @override
+  int get hashCode => searchText.hashCode ^ hasFavorites.hashCode;
 }
