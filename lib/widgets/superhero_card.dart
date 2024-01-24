@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
@@ -25,11 +26,12 @@ class SuperheroCard extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: Row(children: [
-          Image.network(
-            info.imageUrl,
+          CachedNetworkImage(
+            imageUrl: info.imageUrl,
             width: 70,
             height: 70,
             fit: BoxFit.cover,
+            errorWidget: (context, url, error) => const Center(child: Text('Error')),
           ),
           const SizedBox(width: 12),
           Expanded(

@@ -43,7 +43,8 @@ Future<void> testOneSuperhero(final WidgetTester tester, final SuperheroInfo sup
   expect(
     find.text(superheroInfo.name.toUpperCase()),
     findsOneWidget,
-    reason: """
+    reason:
+        """
 Cannot find Text widget with text '${superheroInfo.name.toUpperCase()}' in SuperheroCard.
 Tested on superheroInfo: $superheroInfo
         """,
@@ -51,7 +52,8 @@ Tested on superheroInfo: $superheroInfo
   expect(
     find.text(superheroInfo.realName),
     findsOneWidget,
-    reason: """
+    reason:
+        """
 Cannot find Text widget with text '${superheroInfo.realName}' in SuperheroCard.
 Tested on superheroInfo: $superheroInfo
         """,

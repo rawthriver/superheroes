@@ -1,9 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
-
-//API key: 7030337270418237
+import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const int minSymbols = 3;
@@ -20,7 +22,9 @@ class MainBloc {
   Stream<List<SuperheroInfo>> observeFavorites() => favoriteSuperheroesSubject;
   Stream<List<SuperheroInfo>> observeSearched() => searchedSuperheroesSubject;
 
-  MainBloc() {
+  http.Client? client;
+
+  MainBloc({http.Client? client}) {
     // initial page
     stateSubject.add(MainPageState.noFavorites);
     // listen for input events
@@ -45,9 +49,26 @@ class MainBloc {
   }
 
   Future<List<SuperheroInfo>> search(final String text) async {
-    await Future.delayed(const Duration(seconds: 1));
-    var s = text.toLowerCase();
-    return SuperheroInfo.mocked.where((item) => item.name.toLowerCase().contains(s)).toList();
+    final token = dotenv.env['SUPERHERO_TOKEN'];
+    final response =
+        await (client ??= http.Client()).get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
+    final data = json.decode(response.body);
+    if (data['response'] == 'success') {
+      final list = data['results'] as List;
+      return list
+          .map((json) => Superhero.fromJson(json))
+          .map(
+            (hero) => SuperheroInfo(
+              name: hero.name,
+              realName: hero.biography.fullName,
+              imageUrl: hero.image.url,
+            ),
+          )
+          .toList();
+    } else if (data['response'] == 'error' && data['error'] == 'character with given name not found') {
+      return [];
+    }
+    throw Exception('Something went wrong');
   }
 
   void _searchForSuperheroes(final String text) {
@@ -84,6 +105,7 @@ class MainBloc {
     currentTextSubject.close();
     textSubscription?.cancel();
     searchSubscription?.cancel();
+    client?.close();
   }
 }
 

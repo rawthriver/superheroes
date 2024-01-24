@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
+import 'package:superheroes/utils.dart';
 import 'package:superheroes/widgets/action_button.dart';
 
 class InfoWithButton extends StatelessWidget {
@@ -68,7 +69,7 @@ class InfoWithButton extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          ActionButton(text: buttonText, action: () => {}),
+          ActionButton(text: buttonText, action: Utils.noop),
         ],
       ),
     );

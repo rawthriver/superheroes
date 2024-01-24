@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/pages/favorites_page.dart';
@@ -12,14 +13,22 @@ import 'package:superheroes/widgets/search_widget.dart';
 import 'package:superheroes/widgets/superheroes_list.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final http.Client? client;
+
+  const MainPage({super.key, this.client});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  final MainBloc bloc = MainBloc();
+  late final MainBloc bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    bloc = MainBloc(client: widget.client);
+  }
 
   @override
   Widget build(BuildContext context) {
