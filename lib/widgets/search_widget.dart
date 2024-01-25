@@ -5,7 +5,9 @@ import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/utils.dart';
 
 class SearchWidget extends StatefulWidget {
-  const SearchWidget({super.key});
+  final FocusNode focus;
+
+  const SearchWidget({super.key, required this.focus});
 
   @override
   State<SearchWidget> createState() => _SearchWidgetState();
@@ -19,7 +21,7 @@ class _SearchWidgetState extends State<SearchWidget> with StateDelayedInit {
   void initState() {
     super.initState();
     controller = TextEditingController();
-    focus = FocusNode();
+    focus = widget.focus; //FocusNode();
     focus.addListener(() {
       if (!focus.hasFocus) setState(Utils.noop);
     });
@@ -86,7 +88,7 @@ class _SearchWidgetState extends State<SearchWidget> with StateDelayedInit {
   @override
   void dispose() {
     controller.dispose();
-    focus.dispose();
+    // focus.dispose();
     super.dispose();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
-import 'package:superheroes/utils.dart';
 import 'package:superheroes/widgets/action_button.dart';
 
 class InfoWithButton extends StatelessWidget {
@@ -11,6 +10,7 @@ class InfoWithButton extends StatelessWidget {
   final double imageWidth;
   final double imageHeight;
   final double imageTopPadding;
+  final VoidCallback action;
 
   const InfoWithButton({
     super.key,
@@ -21,6 +21,7 @@ class InfoWithButton extends StatelessWidget {
     required this.imageWidth,
     required this.imageHeight,
     required this.imageTopPadding,
+    required this.action,
   });
 
   @override
@@ -69,7 +70,7 @@ class InfoWithButton extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          ActionButton(text: buttonText, action: Utils.noop),
+          ActionButton(text: buttonText, action: action),
         ],
       ),
     );

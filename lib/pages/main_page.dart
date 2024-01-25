@@ -23,21 +23,23 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late final MainBloc bloc;
+  late final FocusNode focus;
 
   @override
   void initState() {
     super.initState();
     bloc = MainBloc(client: widget.client);
+    focus = FocusNode();
   }
 
   @override
   Widget build(BuildContext context) {
     return Provider.value(
       value: bloc,
-      child: const Scaffold(
+      child: Scaffold(
         backgroundColor: SuperheroesColors.background,
         body: SafeArea(
-          child: MainPageContent(),
+          child: MainPageContent(focus: focus),
         ),
       ),
     );
@@ -46,24 +48,31 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     bloc.dispose();
+    focus.dispose();
     super.dispose();
   }
 }
 
 class MainPageContent extends StatelessWidget {
-  const MainPageContent({super.key});
+  final FocusNode focus;
+
+  const MainPageContent({super.key, required this.focus});
 
   @override
   Widget build(BuildContext context) {
-    return const Stack(
+    return Stack(
       children: [
-        MainPageStateWidget(),
+        const MainPageStateWidget(),
         Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, top: 12),
-          child: SearchWidget(),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
+          child: SearchWidget(focus: focus),
         ),
       ],
     );
+  }
+
+  void setFocus() {
+    focus.requestFocus();
   }
 }
 
@@ -74,7 +83,7 @@ class MainPageStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return StreamBuilder<MainPageState>(
-      stream: bloc.observeMainPageState(),
+      stream: bloc.observeState(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
           return const SizedBox();

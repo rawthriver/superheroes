@@ -1,16 +1,17 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+import 'package:superheroes/exception/api_exception.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
   static const int minSymbols = 3;
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
+  final BehaviorSubject<Exception> errorSubject = BehaviorSubject();
   final BehaviorSubject<List<SuperheroInfo>> favoriteSuperheroesSubject = BehaviorSubject.seeded(SuperheroInfo.mocked);
   final BehaviorSubject<List<SuperheroInfo>> searchedSuperheroesSubject = BehaviorSubject();
   final BehaviorSubject<String> currentTextSubject = BehaviorSubject.seeded('');
@@ -18,7 +19,8 @@ class MainBloc {
   StreamSubscription? textSubscription;
   StreamSubscription? searchSubscription;
 
-  Stream<MainPageState> observeMainPageState() => stateSubject;
+  Stream<MainPageState> observeState() => stateSubject;
+  Stream<Exception> observeErrors() => errorSubject;
   Stream<List<SuperheroInfo>> observeFavorites() => favoriteSuperheroesSubject;
   Stream<List<SuperheroInfo>> observeSearched() => searchedSuperheroesSubject;
 
@@ -53,20 +55,31 @@ class MainBloc {
     final response =
         await (client ??= http.Client()).get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
     final data = json.decode(response.body);
-    if (data['response'] == 'success') {
-      final list = data['results'] as List;
-      return list
-          .map((json) => Superhero.fromJson(json))
-          .map(
-            (hero) => SuperheroInfo(
-              name: hero.name,
-              realName: hero.biography.fullName,
-              imageUrl: hero.image.url,
-            ),
-          )
-          .toList();
-    } else if (data['response'] == 'error' && data['error'] == 'character with given name not found') {
-      return [];
+    final status = response.statusCode;
+    if (status case >= 500 && < 600) {
+      throw ApiException('Server error happened');
+    } else if (status case >= 400 && < 500) {
+      throw ApiException('Client error happened');
+    } else if (status == 200) {
+      if (data['response'] == 'error') {
+        if (data['error'] != 'character with given name not found') {
+          throw ApiException('Client error happened');
+        } else {
+          return [];
+        }
+      } else if (data['response'] == 'success') {
+        final list = data['results'] as List;
+        return list
+            .map((json) => Superhero.fromJson(json))
+            .map(
+              (hero) => SuperheroInfo(
+                name: hero.name,
+                realName: hero.biography.fullName,
+                imageUrl: hero.image.url,
+              ),
+            )
+            .toList();
+      }
     }
     throw Exception('Something went wrong');
   }
@@ -81,6 +94,7 @@ class MainBloc {
         stateSubject.add(MainPageState.searchResults);
       }
     }, onError: (error) {
+      errorSubject.add(error);
       stateSubject.add(MainPageState.loadingError);
     });
   }
@@ -98,8 +112,13 @@ class MainBloc {
     }
   }
 
+  void retry() {
+    _searchForSuperheroes(currentTextSubject.value);
+  }
+
   void dispose() {
     stateSubject.close();
+    errorSubject.close();
     favoriteSuperheroesSubject.close();
     searchedSuperheroesSubject.close();
     currentTextSubject.close();
