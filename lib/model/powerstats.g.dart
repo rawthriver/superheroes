@@ -6,7 +6,7 @@ part of 'powerstats.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PowerStats _$PowerStatsFromJson(Map<String, dynamic> json) => PowerStats(
+Powerstats _$PowerStatsFromJson(Map<String, dynamic> json) => Powerstats(
       json['intelligence'] as String,
       json['strength'] as String,
       json['speed'] as String,
@@ -15,8 +15,7 @@ PowerStats _$PowerStatsFromJson(Map<String, dynamic> json) => PowerStats(
       json['combat'] as String,
     );
 
-Map<String, dynamic> _$PowerStatsToJson(PowerStats instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PowerStatsToJson(Powerstats instance) => <String, dynamic>{
       'intelligence': instance.intelligence,
       'strength': instance.strength,
       'speed': instance.speed,

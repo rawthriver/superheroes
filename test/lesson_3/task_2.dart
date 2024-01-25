@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +24,7 @@ void runTestLesson3Task2() {
         realName: "Bruce Wayne",
         imageUrl: "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg",
       );
-      final card = SuperheroCard(superheroInfo: batmanSuperheroInfo, onTap: () {});
+      final card = SuperheroCard(info: batmanSuperheroInfo, action: () {});
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -55,8 +54,7 @@ void runTestLesson3Task2() {
               builder: (context) => cachedNetworkImage.progressIndicatorBuilder!(
                 context,
                 "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg",
-                DownloadProgress(
-                    "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg", 100, 50),
+                DownloadProgress("https://www.superherodb.com/pictures2/portraits/10/100/639.jpg", 100, 50),
               ),
             ),
           ),
@@ -85,8 +83,7 @@ void runTestLesson3Task2() {
               builder: (context) => cachedNetworkImage.progressIndicatorBuilder!(
                 context,
                 "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg",
-                DownloadProgress(
-                    "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg", null, 50),
+                DownloadProgress("https://www.superherodb.com/pictures2/portraits/10/100/639.jpg", null, 50),
               ),
             ),
           ),
@@ -97,8 +94,7 @@ void runTestLesson3Task2() {
       expect(
         tester.hasRunningAnimations,
         isTrue,
-        reason:
-            "CircularProgressIndicator should be indeterminate if there are no progress available",
+        reason: "CircularProgressIndicator should be indeterminate if there are no progress available",
       );
     });
   });

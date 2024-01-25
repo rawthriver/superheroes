@@ -28,7 +28,7 @@ void runTestLesson3Task3() {
         realName: "Bruce Wayne",
         imageUrl: "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg",
       );
-      final card = SuperheroCard(superheroInfo: batmanSuperheroInfo, onTap: () {});
+      final card = SuperheroCard(info: batmanSuperheroInfo, action: () {});
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,

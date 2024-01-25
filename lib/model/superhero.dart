@@ -11,7 +11,7 @@ class Superhero {
   final String name;
   final Biography biography;
   final ServerImage image;
-  final PowerStats powerstats;
+  final Powerstats powerstats;
 
   const Superhero(
     this.id,

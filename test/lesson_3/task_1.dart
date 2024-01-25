@@ -16,12 +16,12 @@ import '../shared/internal/finders.dart';
 void runTestLesson3Task1() {
   testWidgets('module1', (WidgetTester tester) async {
     await tester.runAsync(() async {
-      final batmanSuperheroInfo = SuperheroInfo(
+      const batmanSuperheroInfo = SuperheroInfo(
         name: "Batman",
         realName: "Bruce Wayne",
         imageUrl: "https://www.superherodb.com/pictures2/portraits/10/100/639.jpg",
       );
-      final card = SuperheroCard(superheroInfo: batmanSuperheroInfo, onTap: () {});
+      final card = SuperheroCard(info: batmanSuperheroInfo, action: () {});
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -29,8 +29,7 @@ void runTestLesson3Task1() {
         ),
       );
 
-      final placeholderContainerFinder =
-          findTypeByChildTypeOnlyInParentType(Container, CircularProgressIndicator, Row);
+      final placeholderContainerFinder = findTypeByChildTypeOnlyInParentType(Container, CircularProgressIndicator, Row);
 
       expect(
         placeholderContainerFinder,
@@ -44,7 +43,6 @@ void runTestLesson3Task1() {
         widthAndHeight: WidthAndHeight(width: 70, height: 70),
       );
       checkContainerColor(container: container, color: Colors.white24);
-
     });
   });
 }
