@@ -9,7 +9,7 @@ mixin StateDelayedInit<T extends StatefulWidget> on State<T> {
   }
 }
 
-final class Utils {
+final class Fx {
   static void noop() {}
 
   static void unFocus() {
