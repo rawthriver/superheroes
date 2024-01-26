@@ -71,8 +71,9 @@ class MainPageContent extends StatelessWidget {
     );
   }
 
-  void setFocus() {
-    focus.requestFocus();
+  // this is better than propagation
+  static void setFocus(BuildContext context) {
+    context.findAncestorWidgetOfExactType<MainPageContent>()?.focus.requestFocus();
   }
 }
 

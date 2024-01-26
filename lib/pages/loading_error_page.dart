@@ -15,7 +15,9 @@ class LoadingErrorPage extends StatelessWidget {
     return StreamBuilder(
       stream: bloc.errorSubject,
       builder: (context, snapshot) => InfoWithButton(
-        title: snapshot.hasData && snapshot.data is ApiException ? snapshot.data.toString() : 'Error happened',
+        title: snapshot.hasData && snapshot.data is ApiException
+            ? (snapshot.data as ApiException).message
+            : 'Error happened',
         subtitle: 'Please, try again',
         buttonText: 'Retry',
         assetImage: SuperheroesImages.loadingError,

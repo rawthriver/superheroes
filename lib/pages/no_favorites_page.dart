@@ -8,7 +8,6 @@ class NoFavoritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var main = context.findAncestorWidgetOfExactType<MainPageContent>();
     return InfoWithButton(
       title: 'No favorites yet',
       subtitle: 'Search and add',
@@ -17,7 +16,7 @@ class NoFavoritesPage extends StatelessWidget {
       imageWidth: 108,
       imageHeight: 119,
       imageTopPadding: 9,
-      action: () => main?.setFocus(),
+      action: () => MainPageContent.setFocus(context),
     );
   }
 }

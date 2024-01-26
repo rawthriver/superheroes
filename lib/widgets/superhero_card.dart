@@ -47,7 +47,13 @@ class SuperheroCard extends StatelessWidget {
                 ),
               ),
               errorWidget: (context, url, error) => Center(
-                child: Image.asset(SuperheroesImages.unknown),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Image.asset(
+                    SuperheroesImages.unknown,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),

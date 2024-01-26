@@ -5,6 +5,6 @@ class ApiException implements Exception {
 
   @override
   String toString() {
-    return message;
+    return 'ApiException: $message';
   }
 }

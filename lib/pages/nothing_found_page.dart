@@ -8,7 +8,6 @@ class NothingFoundPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var main = context.findAncestorWidgetOfExactType<MainPageContent>();
     return InfoWithButton(
       title: 'Nothing found',
       subtitle: 'Search for something else',
@@ -17,7 +16,7 @@ class NothingFoundPage extends StatelessWidget {
       imageWidth: 84,
       imageHeight: 112,
       imageTopPadding: 16,
-      action: () => main?.setFocus(),
+      action: () => MainPageContent.setFocus(context),
     );
   }
 }

@@ -50,7 +50,7 @@ class MainBloc {
     });
   }
 
-  Future<List<SuperheroInfo>> search(final String text) async {
+  Future<List<SuperheroInfo>> _doSearch(final String text) async {
     final token = dotenv.env['SUPERHERO_TOKEN'];
     final response =
         await (client ??= http.Client()).get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
@@ -86,7 +86,7 @@ class MainBloc {
 
   void _searchForSuperheroes(final String text) {
     stateSubject.add(MainPageState.loading);
-    searchSubscription = search(text).asStream().listen((results) {
+    searchSubscription = _doSearch(text).asStream().listen((results) {
       if (results.isEmpty) {
         stateSubject.add(MainPageState.nothingFound);
       } else {
@@ -97,6 +97,11 @@ class MainBloc {
       errorSubject.add(error);
       stateSubject.add(MainPageState.loadingError);
     });
+  }
+
+  void retry() {
+    searchSubscription?.cancel();
+    _searchForSuperheroes(currentTextSubject.value);
   }
 
   void updateSearchText(final String? text) {
@@ -110,10 +115,6 @@ class MainBloc {
     } else {
       favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
     }
-  }
-
-  void retry() {
-    _searchForSuperheroes(currentTextSubject.value);
   }
 
   void dispose() {
