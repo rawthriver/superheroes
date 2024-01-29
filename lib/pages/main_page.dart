@@ -87,7 +87,7 @@ class MainPageStateWidget extends StatelessWidget {
       stream: bloc.observeState(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
-          return const SizedBox();
+          return const SizedBox.shrink();
         }
         MainPageState state = snapshot.data!;
         switch (state) {

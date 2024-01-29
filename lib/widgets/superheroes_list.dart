@@ -20,7 +20,7 @@ class SuperheroesList extends StatelessWidget {
       stream: stream,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
-          return const SizedBox();
+          return const SizedBox.shrink();
         }
         final list = snapshot.data!;
         return ListView.separated(
@@ -42,7 +42,7 @@ class SuperheroesList extends StatelessWidget {
               return SuperheroCard(
                 info: item,
                 action: () =>
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(name: item.name))),
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: item.id))),
               );
             }
           },

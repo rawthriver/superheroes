@@ -1,9 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
+
 import 'package:superheroes/exception/api_exception.dart';
 import 'package:superheroes/model/superhero.dart';
 
@@ -54,13 +56,13 @@ class MainBloc {
     final token = dotenv.env['SUPERHERO_TOKEN'];
     final response =
         await (client ??= http.Client()).get(Uri.parse('https://superheroapi.com/api/$token/search/$text'));
-    final data = json.decode(response.body);
     final status = response.statusCode;
     if (status case >= 500 && < 600) {
       throw ApiException('Server error happened');
     } else if (status case >= 400 && < 500) {
       throw ApiException('Client error happened');
     } else if (status == 200) {
+      final data = json.decode(response.body);
       if (data['response'] == 'error') {
         if (data['error'] != 'character with given name not found') {
           throw ApiException('Client error happened');
@@ -73,6 +75,7 @@ class MainBloc {
             .map((json) => Superhero.fromJson(json))
             .map(
               (hero) => SuperheroInfo(
+                id: hero.id,
                 name: hero.name,
                 realName: hero.biography.fullName,
                 imageUrl: hero.image.url,
@@ -140,11 +143,13 @@ enum MainPageState {
 }
 
 class SuperheroInfo {
+  final String id;
   final String name;
   final String realName;
   final String imageUrl;
 
   const SuperheroInfo({
+    required this.id,
     required this.name,
     required this.realName,
     required this.imageUrl,
@@ -153,24 +158,35 @@ class SuperheroInfo {
   @override
   bool operator ==(covariant SuperheroInfo other) {
     if (identical(this, other)) return true;
-    return other.name == name && other.realName == realName && other.imageUrl == imageUrl;
+
+    return other.id == id && other.name == name && other.realName == realName && other.imageUrl == imageUrl;
   }
 
   @override
-  int get hashCode => name.hashCode ^ realName.hashCode ^ imageUrl.hashCode;
+  int get hashCode {
+    return id.hashCode ^ name.hashCode ^ realName.hashCode ^ imageUrl.hashCode;
+  }
+
+  @override
+  String toString() {
+    return 'SuperheroInfo(id: $id, name: $name, realName: $realName, imageUrl: $imageUrl)';
+  }
 
   static const mocked = [
     SuperheroInfo(
+      id: '70',
       name: 'Batman',
       realName: 'Bruce Wayne',
       imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/639.jpg',
     ),
     SuperheroInfo(
+      id: '732',
       name: 'Ironman',
       realName: 'Tony Stark',
       imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/85.jpg',
     ),
     SuperheroInfo(
+      id: '687',
       name: 'Venom',
       realName: 'Eddie Brock',
       imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/22.jpg',
