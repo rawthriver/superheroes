@@ -26,24 +26,9 @@ class SuperheroesList extends StatelessWidget {
         return ListView.separated(
           itemBuilder: (context, index) {
             if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: SuperheroesColors.text,
-                  ),
-                ),
-              );
+              return ListTitle(title: title);
             } else {
-              final item = list[index - 1];
-              return SuperheroCard(
-                info: item,
-                action: () =>
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: item.id))),
-              );
+              return ListTile(hero: list[index - 1]);
             }
           },
           separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -51,6 +36,50 @@ class SuperheroesList extends StatelessWidget {
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         );
       },
+    );
+  }
+}
+
+class ListTile extends StatelessWidget {
+  final SuperheroInfo hero;
+
+  const ListTile({
+    super.key,
+    required this.hero,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: SuperheroCard(
+        info: hero,
+        action: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: hero.id))),
+      ),
+    );
+  }
+}
+
+class ListTitle extends StatelessWidget {
+  const ListTitle({
+    super.key,
+    required this.title,
+  });
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 90, bottom: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w800,
+          color: SuperheroesColors.text,
+        ),
+      ),
     );
   }
 }

@@ -23,7 +23,7 @@ class _SearchWidgetState extends State<SearchWidget> with StateDelayedInit {
     controller = TextEditingController();
     focus = widget.focus; //FocusNode();
     focus.addListener(() {
-      if (!focus.hasFocus) setState(Fx.noop);
+      if (!focus.hasFocus) setState(() {});
     });
     registerDelayedInit(() {
       final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
@@ -68,7 +68,7 @@ class _SearchWidgetState extends State<SearchWidget> with StateDelayedInit {
           onTap: () {
             controller.clear();
             focus.requestFocus();
-            setState(Fx.noop);
+            setState(() {});
           },
           child: const Icon(
             Icons.close,

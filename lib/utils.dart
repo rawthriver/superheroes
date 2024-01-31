@@ -10,8 +10,6 @@ mixin StateDelayedInit<T extends StatefulWidget> on State<T> {
 }
 
 final class Fx {
-  static void noop() {}
-
   static void unFocus() {
     FocusManager.instance.primaryFocus?.unfocus();
   }

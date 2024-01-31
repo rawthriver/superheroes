@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
 
 import 'package:superheroes/exception/api_exception.dart';
+import 'package:superheroes/favorite_storage.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
@@ -14,7 +15,6 @@ class MainBloc {
 
   final BehaviorSubject<MainPageState> stateSubject = BehaviorSubject();
   final BehaviorSubject<Exception> errorSubject = BehaviorSubject();
-  final BehaviorSubject<List<SuperheroInfo>> favoriteSuperheroesSubject = BehaviorSubject.seeded(SuperheroInfo.mocked);
   final BehaviorSubject<List<SuperheroInfo>> searchedSuperheroesSubject = BehaviorSubject();
   final BehaviorSubject<String> currentTextSubject = BehaviorSubject.seeded('');
 
@@ -23,7 +23,12 @@ class MainBloc {
 
   Stream<MainPageState> observeState() => stateSubject;
   Stream<Exception> observeErrors() => errorSubject;
-  Stream<List<SuperheroInfo>> observeFavorites() => favoriteSuperheroesSubject;
+  Stream<List<SuperheroInfo>> observeFavorites() {
+    return FavoriteSuperheroStorage.getInstance()
+        .observeFavorites()
+        .map((heroes) => heroes.map((hero) => SuperheroInfo.fromSuperhero(hero)).toList());
+  }
+
   Stream<List<SuperheroInfo>> observeSearched() => searchedSuperheroesSubject;
 
   http.Client? client;
@@ -34,15 +39,10 @@ class MainBloc {
     // listen for input events
     textSubscription = Rx.combineLatest2(
         currentTextSubject.distinct().debounceTime(const Duration(milliseconds: 500)),
-        favoriteSuperheroesSubject,
+        FavoriteSuperheroStorage.getInstance().observeFavorites(),
         (text, favorites) => MainPageStateInfo(searchText: text, hasFavorites: favorites.isNotEmpty)).listen((value) {
-      // print('Text = $text');
       searchSubscription?.cancel();
       if (value.searchText.isEmpty) {
-        // alternative to combining streams
-        // stateSubject.add(favoriteSuperheroesSubject.hasValue && favoriteSuperheroesSubject.value.isNotEmpty
-        //     ? MainPageState.favorites
-        //     : MainPageState.noFavorites);
         stateSubject.add(value.hasFavorites ? MainPageState.favorites : MainPageState.noFavorites);
       } else if (value.searchText.length < minSymbols) {
         stateSubject.add(MainPageState.minSymbols);
@@ -71,17 +71,7 @@ class MainBloc {
         }
       } else if (data['response'] == 'success') {
         final list = data['results'] as List;
-        return list
-            .map((json) => Superhero.fromJson(json))
-            .map(
-              (hero) => SuperheroInfo(
-                id: hero.id,
-                name: hero.name,
-                realName: hero.biography.fullName,
-                imageUrl: hero.image.url,
-              ),
-            )
-            .toList();
+        return list.map((json) => Superhero.fromJson(json)).map(SuperheroInfo.fromSuperhero).toList();
       }
     }
     throw Exception('Something went wrong');
@@ -111,23 +101,15 @@ class MainBloc {
     currentTextSubject.add(text ?? '');
   }
 
-  void removeFavorite() {
-    if (favoriteSuperheroesSubject.hasValue && favoriteSuperheroesSubject.value.isNotEmpty) {
-      favoriteSuperheroesSubject.add(favoriteSuperheroesSubject.value.toList()..removeLast());
-      // if (favoriteSuperheroesSubject.value.isEmpty) stateSubject.add(MainPageState.noFavorites);
-    } else {
-      favoriteSuperheroesSubject.add(SuperheroInfo.mocked);
-    }
-  }
-
   void dispose() {
     stateSubject.close();
     errorSubject.close();
-    favoriteSuperheroesSubject.close();
     searchedSuperheroesSubject.close();
     currentTextSubject.close();
+
     textSubscription?.cancel();
     searchSubscription?.cancel();
+
     client?.close();
   }
 }
@@ -192,6 +174,15 @@ class SuperheroInfo {
       imageUrl: 'https://www.superherodb.com/pictures2/portraits/10/100/22.jpg',
     ),
   ];
+
+  factory SuperheroInfo.fromSuperhero(final Superhero hero) {
+    return SuperheroInfo(
+      id: hero.id,
+      name: hero.name,
+      realName: hero.biography.fullName,
+      imageUrl: hero.image.url,
+    );
+  }
 }
 
 class MainPageStateInfo {

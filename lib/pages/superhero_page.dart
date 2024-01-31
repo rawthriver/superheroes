@@ -9,6 +9,7 @@ import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
+import 'package:superheroes/resources/superheroes_icons.dart';
 
 class SuperheroPage extends StatefulWidget {
   final http.Client? client;
@@ -46,14 +47,14 @@ class SuperheroPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = Provider.of<SuperheroBloc>(context, listen: false);
+    final bloc = Provider.of<SuperheroBloc>(context, listen: false);
     return StreamBuilder<Superhero>(
       stream: bloc.observeSuperhero(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
           return const SizedBox.shrink();
         }
-        var hero = snapshot.data!;
+        final hero = snapshot.data!;
         return CustomScrollView(
           slivers: [
             SuperheroAppBar(hero: hero),
@@ -90,6 +91,7 @@ class SuperheroAppBar extends StatelessWidget {
       expandedHeight: 348,
       backgroundColor: SuperheroesColors.background,
       foregroundColor: SuperheroesColors.text,
+      actions: const [FavoriteButton()],
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           hero.name,
@@ -105,6 +107,35 @@ class SuperheroAppBar extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
+    );
+  }
+}
+
+class FavoriteButton extends StatelessWidget {
+  const FavoriteButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = Provider.of<SuperheroBloc>(context, listen: false);
+    return StreamBuilder<bool>(
+      stream: bloc.observeIsFavorite(),
+      initialData: false,
+      builder: (context, snapshot) {
+        final isFavorite = snapshot.hasData && snapshot.data != null && snapshot.data!;
+        return GestureDetector(
+          onTap: () => isFavorite ? bloc.removeFromFavorites() : bloc.addToFavorites(),
+          child: Container(
+            height: 52,
+            width: 52,
+            alignment: Alignment.center,
+            child: Image.asset(
+              isFavorite ? SuperheroesIcons.starFilled : SuperheroesIcons.starEmpty,
+              width: 32,
+              height: 32,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -163,7 +194,7 @@ class PowerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var color = calculateColor(value);
+    final color = calculateColor(value);
     return Expanded(
       child: Stack(
         alignment: Alignment.topCenter,

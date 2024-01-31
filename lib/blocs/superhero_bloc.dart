@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
 import 'package:superheroes/exception/api_exception.dart';
+import 'package:superheroes/favorite_storage.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class SuperheroBloc {
@@ -15,13 +16,15 @@ class SuperheroBloc {
 
   final superheroSubject = BehaviorSubject<Superhero>();
 
+  StreamSubscription? favoriteSubscription;
   StreamSubscription? heroSubscription;
 
   SuperheroBloc({this.client, required this.id}) {
-    _getSuperhero();
+    _getFromFavorites();
   }
 
   Stream<Superhero> observeSuperhero() => superheroSubject;
+  Stream<bool> observeIsFavorite() => FavoriteSuperheroStorage.getInstance().observeIsFavorite(id);
 
   Future<Superhero> _makeRequest(final String id) async {
     final token = dotenv.env['SUPERHERO_TOKEN'];
@@ -42,6 +45,17 @@ class SuperheroBloc {
     throw Exception('Something went wrong');
   }
 
+  void _getFromFavorites() {
+    favoriteSubscription?.cancel();
+    favoriteSubscription = FavoriteSuperheroStorage.getInstance().getFavorite(id).asStream().listen((hero) {
+      if (hero != null) {
+        superheroSubject.add(hero);
+      } else {
+        _getSuperhero();
+      }
+    });
+  }
+
   void _getSuperhero() {
     heroSubscription?.cancel();
     heroSubscription = _makeRequest(id).asStream().listen((result) {
@@ -51,9 +65,18 @@ class SuperheroBloc {
     });
   }
 
+  void addToFavorites() {
+    if (superheroSubject.hasValue) FavoriteSuperheroStorage.getInstance().addToFavorites(superheroSubject.value);
+  }
+
+  void removeFromFavorites() {
+    FavoriteSuperheroStorage.getInstance().removeFromFavorites(id);
+  }
+
   void dispose() {
-    client?.close();
-    superheroSubject.close();
+    favoriteSubscription?.cancel();
     heroSubscription?.cancel();
+    superheroSubject.close();
+    client?.close();
   }
 }

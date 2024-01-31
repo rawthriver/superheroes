@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
-import 'package:superheroes/widgets/action_button.dart';
 import 'package:superheroes/widgets/superheroes_list.dart';
 
 class FavoritesPage extends StatelessWidget {
@@ -20,10 +19,6 @@ class FavoritesPage extends StatelessWidget {
               title: 'Your favorites',
               stream: bloc.observeFavorites(),
             ),
-          ),
-          ActionButton(
-            text: 'Remove',
-            action: bloc.removeFavorite,
           ),
           const SizedBox(height: 30),
         ],
