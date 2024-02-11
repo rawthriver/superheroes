@@ -4,14 +4,14 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:superheroes/model/superhero.dart';
 
-class FavoriteSuperheroStorage {
+class FavoriteSuperheroesStorage {
   static const String _key = 'favorite_superheroes';
 
-  final updater = PublishSubject<Null>();
+  final _updater = PublishSubject<Null>();
 
-  static FavoriteSuperheroStorage? _instance;
-  factory FavoriteSuperheroStorage.getInstance() => _instance ??= FavoriteSuperheroStorage._();
-  FavoriteSuperheroStorage._();
+  static FavoriteSuperheroesStorage? _instance;
+  factory FavoriteSuperheroesStorage.getInstance() => _instance ??= FavoriteSuperheroesStorage._();
+  FavoriteSuperheroesStorage._();
 
   Future<List<String>> _getRawList() async {
     final sp = await SharedPreferences.getInstance();
@@ -21,7 +21,7 @@ class FavoriteSuperheroStorage {
   Future<bool> _setRawList(final List<String> list) async {
     final sp = await SharedPreferences.getInstance();
     final result = await sp.setStringList(_key, list);
-    if (result) updater.add(null);
+    if (result) _updater.add(null);
     return Future.value(result);
   }
 
@@ -54,7 +54,7 @@ class FavoriteSuperheroStorage {
 
   Stream<List<Superhero>> observeFavorites() async* {
     yield await _getSuperheroesList();
-    await for (final _ in updater) {
+    await for (final _ in _updater) {
       yield await _getSuperheroesList();
     }
   }

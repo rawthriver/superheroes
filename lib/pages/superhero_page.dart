@@ -87,7 +87,7 @@ class SuperheroAppBar extends StatelessWidget {
     return SliverAppBar(
       stretch: true,
       pinned: true,
-      floating: true, //try off
+      floating: true,
       expandedHeight: 348,
       backgroundColor: SuperheroesColors.background,
       foregroundColor: SuperheroesColors.text,
@@ -121,7 +121,7 @@ class FavoriteButton extends StatelessWidget {
       stream: bloc.observeIsFavorite(),
       initialData: false,
       builder: (context, snapshot) {
-        final isFavorite = snapshot.hasData && snapshot.data != null && snapshot.data!;
+        final isFavorite = snapshot.hasData && snapshot.data!;
         return GestureDetector(
           onTap: () => isFavorite ? bloc.removeFromFavorites() : bloc.addToFavorites(),
           child: Container(

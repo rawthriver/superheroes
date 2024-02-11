@@ -24,7 +24,7 @@ class SuperheroBloc {
   }
 
   Stream<Superhero> observeSuperhero() => superheroSubject;
-  Stream<bool> observeIsFavorite() => FavoriteSuperheroStorage.getInstance().observeIsFavorite(id);
+  Stream<bool> observeIsFavorite() => FavoriteSuperheroesStorage.getInstance().observeIsFavorite(id);
 
   Future<Superhero> _makeRequest(final String id) async {
     final token = dotenv.env['SUPERHERO_TOKEN'];
@@ -47,7 +47,7 @@ class SuperheroBloc {
 
   void _getFromFavorites() {
     favoriteSubscription?.cancel();
-    favoriteSubscription = FavoriteSuperheroStorage.getInstance().getFavorite(id).asStream().listen((hero) {
+    favoriteSubscription = FavoriteSuperheroesStorage.getInstance().getFavorite(id).asStream().listen((hero) {
       if (hero != null) {
         superheroSubject.add(hero);
       } else {
@@ -66,11 +66,11 @@ class SuperheroBloc {
   }
 
   void addToFavorites() {
-    if (superheroSubject.hasValue) FavoriteSuperheroStorage.getInstance().addToFavorites(superheroSubject.value);
+    if (superheroSubject.hasValue) FavoriteSuperheroesStorage.getInstance().addToFavorites(superheroSubject.value);
   }
 
   void removeFromFavorites() {
-    FavoriteSuperheroStorage.getInstance().removeFromFavorites(id);
+    FavoriteSuperheroesStorage.getInstance().removeFromFavorites(id);
   }
 
   void dispose() {

@@ -24,7 +24,7 @@ class MainBloc {
   Stream<MainPageState> observeState() => stateSubject;
   Stream<Exception> observeErrors() => errorSubject;
   Stream<List<SuperheroInfo>> observeFavorites() {
-    return FavoriteSuperheroStorage.getInstance()
+    return FavoriteSuperheroesStorage.getInstance()
         .observeFavorites()
         .map((heroes) => heroes.map((hero) => SuperheroInfo.fromSuperhero(hero)).toList());
   }
@@ -39,7 +39,7 @@ class MainBloc {
     // listen for input events
     textSubscription = Rx.combineLatest2(
         currentTextSubject.distinct().debounceTime(const Duration(milliseconds: 500)),
-        FavoriteSuperheroStorage.getInstance().observeFavorites(),
+        FavoriteSuperheroesStorage.getInstance().observeFavorites(),
         (text, favorites) => MainPageStateInfo(searchText: text, hasFavorites: favorites.isNotEmpty)).listen((value) {
       searchSubscription?.cancel();
       if (value.searchText.isEmpty) {
