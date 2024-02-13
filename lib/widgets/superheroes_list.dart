@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
 import 'package:superheroes/pages/superhero_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
@@ -24,14 +25,14 @@ class SuperheroesList extends StatelessWidget {
         }
         final list = snapshot.data!;
         return ListView.separated(
-          itemBuilder: (context, index) {
+          itemBuilder: (_, index) {
             if (index == 0) {
               return ListTitle(title: title);
             } else {
               return ListTile(hero: list[index - 1]);
             }
           },
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          separatorBuilder: (_, __) => const SizedBox(height: 8),
           itemCount: list.length + 1,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         );
@@ -50,11 +51,38 @@ class ListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SuperheroCard(
-        info: hero,
-        action: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: hero.id))),
+      child: ClipRRect(
+        // rounded bg fix
+        borderRadius: BorderRadius.circular(8),
+        child: Dismissible(
+          key: ValueKey(hero.id),
+          background: Container(
+            height: 70,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              // borderRadius: BorderRadius.circular(8),
+              color: SuperheroesColors.red,
+            ),
+            child: Text(
+              'Remove from favorites'.toUpperCase(),
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                color: SuperheroesColors.text,
+              ),
+            ),
+          ),
+          onDismissed: (_) => bloc.removeSuperhero(hero.id),
+          child: SuperheroCard(
+            info: hero,
+            action: () =>
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: hero.id))),
+            removable: true,
+          ),
+        ),
       ),
     );
   }

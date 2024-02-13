@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'package:superheroes/exception/api_exception.dart';
 import 'package:superheroes/favorite_storage.dart';
+import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/superhero.dart';
 
 class MainBloc {
@@ -33,9 +34,9 @@ class MainBloc {
 
   http.Client? client;
 
-  MainBloc({http.Client? client}) {
+  MainBloc({this.client}) {
     // initial page
-    stateSubject.add(MainPageState.noFavorites);
+    stateSubject.add(MainPageState.loading);
     // listen for input events
     textSubscription = Rx.combineLatest2(
         currentTextSubject.distinct().debounceTime(const Duration(milliseconds: 500)),
@@ -101,6 +102,10 @@ class MainBloc {
     currentTextSubject.add(text ?? '');
   }
 
+  removeSuperhero(String id) {
+    FavoriteSuperheroesStorage.getInstance().removeFromFavorites(id);
+  }
+
   void dispose() {
     stateSubject.close();
     errorSubject.close();
@@ -129,12 +134,14 @@ class SuperheroInfo {
   final String name;
   final String realName;
   final String imageUrl;
+  final AlignmentInfo? alignment;
 
   const SuperheroInfo({
     required this.id,
     required this.name,
     required this.realName,
     required this.imageUrl,
+    this.alignment,
   });
 
   @override
@@ -181,6 +188,7 @@ class SuperheroInfo {
       name: hero.name,
       realName: hero.biography.fullName,
       imageUrl: hero.image.url,
+      alignment: hero.biography.alignmentInfo,
     );
   }
 }

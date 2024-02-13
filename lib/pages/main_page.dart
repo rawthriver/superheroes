@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/main_bloc.dart';
-import 'package:superheroes/pages/favorites_page.dart';
 import 'package:superheroes/pages/loading_error_page.dart';
 import 'package:superheroes/pages/min_symbols_page.dart';
 import 'package:superheroes/pages/no_favorites_page.dart';
@@ -97,11 +96,11 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.noFavorites:
             return const NoFavoritesPage();
           case MainPageState.favorites:
-            return const FavoritesPage();
-          // return SuperheroesList(
-          //   title: 'Your favorites',
-          //   stream: bloc.observeFavorites(),
-          // );
+            // return const FavoritesPage();
+            return SuperheroesList(
+              title: 'Your favorites',
+              stream: bloc.observeFavorites(),
+            );
           case MainPageState.searchResults:
             // return const SearchResultsPage();
             return SuperheroesList(
