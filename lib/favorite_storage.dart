@@ -62,4 +62,13 @@ class FavoriteSuperheroesStorage {
   Stream<bool> observeIsFavorite(final String id) {
     return observeFavorites().map((list) => list.any((e) => e.id == id));
   }
+
+  void update(final Superhero hero) async {
+    final list = await _getSuperheroesList();
+    final index = list.indexWhere((element) => element.id == hero.id);
+    if (index > -1) {
+      list[index] = hero;
+      _setSuperheroesList(list);
+    }
+  }
 }

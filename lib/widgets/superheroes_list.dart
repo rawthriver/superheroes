@@ -8,12 +8,9 @@ import 'package:superheroes/widgets/superhero_card.dart';
 class SuperheroesList extends StatelessWidget {
   final String title;
   final Stream<List<SuperheroInfo>> stream;
+  final bool swipeEnabled;
 
-  const SuperheroesList({
-    super.key,
-    required this.title,
-    required this.stream,
-  });
+  const SuperheroesList({super.key, required this.title, required this.stream, this.swipeEnabled = false});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +26,7 @@ class SuperheroesList extends StatelessWidget {
             if (index == 0) {
               return ListTitle(title: title);
             } else {
-              return ListTile(hero: list[index - 1]);
+              return ListTile(hero: list[index - 1], swipeEnabled: swipeEnabled);
             }
           },
           separatorBuilder: (_, __) => const SizedBox(height: 8),
@@ -43,45 +40,66 @@ class SuperheroesList extends StatelessWidget {
 
 class ListTile extends StatelessWidget {
   final SuperheroInfo hero;
+  final bool swipeEnabled;
 
   const ListTile({
     super.key,
     required this.hero,
+    this.swipeEnabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final MainBloc bloc = Provider.of<MainBloc>(context, listen: false);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ClipRRect(
-        // rounded bg fix
+    Widget card = SuperheroCard(
+      info: hero,
+      action: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: hero.id))),
+      swipeEnabled: swipeEnabled,
+    );
+    if (swipeEnabled) {
+      card = ClipRRect(
+        // unclipped corners fix
         borderRadius: BorderRadius.circular(8),
         child: Dismissible(
           key: ValueKey(hero.id),
-          background: Container(
-            height: 70,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              // borderRadius: BorderRadius.circular(8),
-              color: SuperheroesColors.red,
-            ),
-            child: Text(
-              'Remove from favorites'.toUpperCase(),
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-                color: SuperheroesColors.text,
-              ),
-            ),
-          ),
+          background: const DismissWidget(alignment: Alignment.centerLeft),
+          secondaryBackground: const DismissWidget(alignment: Alignment.centerRight),
           onDismissed: (_) => bloc.removeSuperhero(hero.id),
-          child: SuperheroCard(
-            info: hero,
-            action: () =>
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SuperheroPage(id: hero.id))),
-            removable: true,
-          ),
+          child: card,
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: card,
+    );
+  }
+}
+
+class DismissWidget extends StatelessWidget {
+  final Alignment alignment;
+
+  const DismissWidget({
+    super.key,
+    required this.alignment,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 70,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      alignment: alignment,
+      decoration: const BoxDecoration(
+        // borderRadius: BorderRadius.circular(8),
+        color: SuperheroesColors.red,
+      ),
+      child: Text(
+        'Remove\nfrom\nfavorites'.toUpperCase(),
+        style: const TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          color: SuperheroesColors.text,
         ),
       ),
     );

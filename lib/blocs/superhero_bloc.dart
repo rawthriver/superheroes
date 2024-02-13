@@ -16,7 +16,7 @@ class SuperheroBloc {
 
   final superheroSubject = BehaviorSubject<Superhero>();
 
-  StreamSubscription? favoriteSubscription;
+  // StreamSubscription? favoriteSubscription;
   StreamSubscription? heroSubscription;
 
   SuperheroBloc({this.client, required this.id}) {
@@ -46,22 +46,20 @@ class SuperheroBloc {
   }
 
   void _getFromFavorites() {
-    favoriteSubscription?.cancel();
-    favoriteSubscription = FavoriteSuperheroesStorage.getInstance().getFavorite(id).asStream().listen((hero) {
-      if (hero != null) {
-        superheroSubject.add(hero);
-      } else {
-        _getSuperhero();
-      }
-    });
+    // favoriteSubscription?.cancel();
+    FavoriteSuperheroesStorage.getInstance()
+        .getFavorite(id)
+        .asStream()
+        .listen(_getSuperhero, onError: (_) => _getSuperhero(null));
   }
 
-  void _getSuperhero() {
+  void _getSuperhero(Superhero? existing) {
     heroSubscription?.cancel();
     heroSubscription = _makeRequest(id).asStream().listen((result) {
-      superheroSubject.add(result);
-    }, onError: (error) {
-      // errorSubject.add(error);
+      FavoriteSuperheroesStorage.getInstance().update(result);
+      superheroSubject.add(existing != null && result == existing ? existing : result);
+    }, onError: (_) {
+      if (existing != null) superheroSubject.add(existing);
     });
   }
 
@@ -74,7 +72,7 @@ class SuperheroBloc {
   }
 
   void dispose() {
-    favoriteSubscription?.cancel();
+    // favoriteSubscription?.cancel();
     heroSubscription?.cancel();
     superheroSubject.close();
     client?.close();

@@ -100,6 +100,7 @@ class MainPageStateWidget extends StatelessWidget {
             return SuperheroesList(
               title: 'Your favorites',
               stream: bloc.observeFavorites(),
+              swipeEnabled: true,
             );
           case MainPageState.searchResults:
             // return const SearchResultsPage();

@@ -67,7 +67,7 @@ class _SearchWidgetState extends State<SearchWidget> with StateDelayedInit {
         suffix: GestureDetector(
           onTap: () {
             controller.clear();
-            focus.requestFocus();
+            // focus.requestFocus();
             setState(() {});
           },
           child: const Icon(

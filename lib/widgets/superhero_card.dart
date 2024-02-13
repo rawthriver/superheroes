@@ -8,13 +8,13 @@ import 'package:superheroes/resources/superheroes_images.dart';
 class SuperheroCard extends StatelessWidget {
   final SuperheroInfo info;
   final VoidCallback action;
-  final bool removable;
+  final bool swipeEnabled;
 
   const SuperheroCard({
     super.key,
     required this.info,
     required this.action,
-    this.removable = false,
+    this.swipeEnabled = false,
   });
 
   @override
@@ -25,7 +25,7 @@ class SuperheroCard extends StatelessWidget {
         height: 70,
         decoration: BoxDecoration(
           color: SuperheroesColors.card,
-          borderRadius: BorderRadius.circular(removable ? 0 : 8),
+          borderRadius: BorderRadius.circular(swipeEnabled ? 0 : 8),
         ),
         clipBehavior: Clip.antiAlias,
         child: Row(children: [

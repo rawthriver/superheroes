@@ -1,7 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:json_annotation/json_annotation.dart';
+
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/server_image.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'superhero.g.dart';
 
@@ -24,4 +26,20 @@ class Superhero {
   factory Superhero.fromJson(final Map<String, dynamic> json) => _$SuperheroFromJson(json);
 
   Map<String, dynamic> toJson() => _$SuperheroToJson(this);
+
+  @override
+  bool operator ==(covariant Superhero other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id &&
+        other.name == name &&
+        other.biography == biography &&
+        other.image == image &&
+        other.powerstats == powerstats;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ name.hashCode ^ biography.hashCode ^ image.hashCode ^ powerstats.hashCode;
+  }
 }

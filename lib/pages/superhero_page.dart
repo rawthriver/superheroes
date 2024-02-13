@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/superhero_bloc.dart';
+import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
+import 'package:superheroes/resources/superheroes_images.dart';
 
 class SuperheroPage extends StatefulWidget {
   final http.Client? client;
@@ -64,6 +66,7 @@ class SuperheroPageContent extends StatelessWidget {
                   const SizedBox(height: 30),
                   if (hero.powerstats.isNotEmpty()) PowerstatsWidget(powerstats: hero.powerstats),
                   BiographyWidget(biography: hero.biography),
+                  const SizedBox(height: 36),
                 ],
               ),
             ),
@@ -105,6 +108,17 @@ class SuperheroAppBar extends StatelessWidget {
         background: CachedNetworkImage(
           imageUrl: hero.image.url,
           fit: BoxFit.cover,
+          placeholder: (context, url) => Container(color: SuperheroesColors.card),
+          errorWidget: (context, url, error) => Container(
+            color: SuperheroesColors.card,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 42),
+              child: Image.asset(
+                SuperheroesImages.unknown,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -271,12 +285,122 @@ class BiographyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
       alignment: Alignment.center,
-      child: Text(
-        biography.toJson().toString(),
-        style: const TextStyle(color: SuperheroesColors.text),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: const BoxDecoration(
+        color: SuperheroesColors.card,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
+      child: Expanded(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    'bio'.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: SuperheroesColors.text,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  BiographyItemWidget(name: 'Full name', value: biography.fullName),
+                  const SizedBox(height: 20),
+                  BiographyItemWidget(name: 'Aliases', value: biography.aliases.join(', ')),
+                  const SizedBox(height: 20),
+                  BiographyItemWidget(name: 'Place of birth', value: biography.placeOfBirth),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+            if (biography.alignmentInfo != null) BiographyAlignmentWidget(alignment: biography.alignmentInfo!),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BiographyAlignmentWidget extends StatelessWidget {
+  final AlignmentInfo alignment;
+
+  const BiographyAlignmentWidget({
+    super.key,
+    required this.alignment,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topRight,
+      child: RotatedBox(
+        quarterTurns: 1,
+        child: Container(
+          width: 70,
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: alignment.color,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20),
+            ),
+          ),
+          child: Text(
+            alignment.name.toUpperCase(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: SuperheroesColors.text,
+              fontWeight: FontWeight.w700,
+              fontSize: 10,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BiographyItemWidget extends StatelessWidget {
+  final String name;
+  final String value;
+
+  const BiographyItemWidget({
+    super.key,
+    required this.name,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name.toUpperCase(),
+                style: const TextStyle(
+                  color: SuperheroesColors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  color: SuperheroesColors.text,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
