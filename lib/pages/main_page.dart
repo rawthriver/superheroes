@@ -112,7 +112,10 @@ class MainPageStateWidget extends StatelessWidget {
           case MainPageState.nothingFound:
             return const NothingFoundPage();
           case MainPageState.loadingError:
-            return const LoadingErrorPage();
+            return LoadingErrorPage(
+              stream: bloc.errorSubject,
+              retry: bloc.retry,
+            );
           default:
             return Center(
               child: Text(

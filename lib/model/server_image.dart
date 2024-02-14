@@ -22,4 +22,7 @@ class ServerImage {
 
   @override
   int get hashCode => url.hashCode;
+
+  @override
+  String toString() => 'ServerImage(url: $url)';
 }

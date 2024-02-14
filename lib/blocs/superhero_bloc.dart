@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -58,7 +57,7 @@ class SuperheroBloc {
         .listen(_getSuperhero, onError: (_) => _getSuperhero(null));
   }
 
-  void _getSuperhero(Superhero? existing) {
+  void _getSuperhero(final Superhero? existing) {
     // initial state
     stateSubject.add(existing != null ? SuperheroPageState.loaded : SuperheroPageState.loading);
     if (existing != null) superheroSubject.add(existing);
@@ -67,9 +66,9 @@ class SuperheroBloc {
     heroSubscription = _makeRequest(id).asStream().listen((result) {
       // update
       stateSubject.add(SuperheroPageState.loaded);
-      if (existing != null && result != existing) {
+      if (result != existing) {
         superheroSubject.add(result);
-        FavoriteSuperheroesStorage.getInstance().update(result);
+        if (existing != null) FavoriteSuperheroesStorage.getInstance().update(result);
       }
     }, onError: (e) {
       if (existing == null) stateSubject.add(SuperheroPageState.error);
@@ -86,24 +85,16 @@ class SuperheroBloc {
   }
 
   void retry() {
-    stateSubject.add(SuperheroPageState.loading);
-    heroSubscription?.cancel();
-    heroSubscription = _makeRequest(id).asStream().listen((result) {
-      stateSubject.add(SuperheroPageState.loaded);
-      superheroSubject.add(result);
-    }, onError: (e) {
-      stateSubject.add(SuperheroPageState.error);
-      errorSubject.add(e);
-    });
+    _getSuperhero(null);
   }
 
   void dispose() {
     stateSubject.close();
+    superheroSubject.close();
     errorSubject.close();
 
     favoriteSubscription?.cancel();
     heroSubscription?.cancel();
-    superheroSubject.close();
 
     client?.close();
   }

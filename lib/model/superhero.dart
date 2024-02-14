@@ -42,4 +42,9 @@ class Superhero {
   int get hashCode {
     return id.hashCode ^ name.hashCode ^ biography.hashCode ^ image.hashCode ^ powerstats.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'Superhero(id: $id, name: $name, biography: $biography, image: $image, powerstats: $powerstats)';
+  }
 }

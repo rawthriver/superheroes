@@ -40,4 +40,9 @@ class Biography {
   int get hashCode {
     return fullName.hashCode ^ alignment.hashCode ^ aliases.hashCode ^ placeOfBirth.hashCode;
   }
+
+  @override
+  String toString() {
+    return 'Biography(fullName: $fullName, alignment: $alignment, aliases: $aliases, placeOfBirth: $placeOfBirth)';
+  }
 }

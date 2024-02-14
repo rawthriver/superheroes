@@ -10,6 +10,7 @@ import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
 import 'package:superheroes/model/superhero.dart';
+import 'package:superheroes/pages/loading_error_page.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
@@ -63,10 +64,10 @@ class SuperheroPageContent extends StatelessWidget {
         switch (state) {
           case SuperheroPageState.loading:
             return const LoadingWidget();
-          case SuperheroPageState.error:
-            return const LoadingErrorWidget();
           case SuperheroPageState.loaded:
             return const SuperheroWidget();
+          case SuperheroPageState.error:
+            return const LoadingErrorWidget();
         }
       },
     );
@@ -111,15 +112,13 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CustomScrollView(
+    return CustomScrollView(
       slivers: [
-        EmptyAppBar(),
+        const EmptyAppBar(),
         SliverToBoxAdapter(
-          child: Column(
-            children: [
-              SizedBox(height: 60),
-              LoadingIndicator(),
-            ],
+          child: Container(
+            padding: const EdgeInsets.only(top: 60),
+            child: const LoadingIndicator(),
           ),
         ),
       ],
@@ -137,25 +136,12 @@ class LoadingErrorWidget extends StatelessWidget {
       slivers: [
         const EmptyAppBar(),
         SliverToBoxAdapter(
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
-              StreamBuilder(
-                stream: bloc.errorSubject,
-                builder: (context, snapshot) => InfoWithButton(
-                  title: snapshot.hasData && snapshot.data is ApiException
-                      ? (snapshot.data as ApiException).message
-                      : 'Error happened',
-                  subtitle: 'Please, try again',
-                  buttonText: 'Retry',
-                  assetImage: SuperheroesImages.loadingError,
-                  imageWidth: 126,
-                  imageHeight: 106,
-                  imageTopPadding: 22,
-                  action: bloc.retry,
-                ),
-              ),
-            ],
+          child: Container(
+            padding: const EdgeInsets.only(top: 60),
+            child: LoadingErrorPage(
+              stream: bloc.errorSubject,
+              retry: bloc.retry,
+            ),
           ),
         ),
       ],
@@ -169,10 +155,8 @@ class EmptyAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SliverAppBar(
-      // stretch: true,
       pinned: true,
       floating: true,
-      // expandedHeight: 348,
       backgroundColor: SuperheroesColors.background,
       foregroundColor: SuperheroesColors.text,
     );
@@ -210,15 +194,13 @@ class SuperheroAppBar extends StatelessWidget {
         background: CachedNetworkImage(
           imageUrl: hero.image.url,
           fit: BoxFit.cover,
-          placeholder: (context, url) => Container(color: SuperheroesColors.card),
+          placeholder: (context, url) => const ColoredBox(color: SuperheroesColors.card),
           errorWidget: (context, url, error) => Container(
             color: SuperheroesColors.card,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 42),
-              child: Image.asset(
-                SuperheroesImages.unknown,
-                fit: BoxFit.contain,
-              ),
+            padding: const EdgeInsets.symmetric(vertical: 42),
+            child: Image.asset(
+              SuperheroesImages.unknownBig,
+              fit: BoxFit.contain,
             ),
           ),
         ),
@@ -389,39 +371,77 @@ class BiographyWidget extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: SuperheroesColors.card,
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Expanded(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Text(
-                    'bio'.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: SuperheroesColors.text,
-                    ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'bio'.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: SuperheroesColors.text,
                   ),
-                  const SizedBox(height: 8),
-                  BiographyItemWidget(name: 'Full name', value: biography.fullName),
-                  const SizedBox(height: 20),
-                  BiographyItemWidget(name: 'Aliases', value: biography.aliases.join(', ')),
-                  const SizedBox(height: 20),
-                  BiographyItemWidget(name: 'Place of birth', value: biography.placeOfBirth),
-                  const SizedBox(height: 8),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                BiographyItemWidget(name: 'Full name', value: biography.fullName),
+                const SizedBox(height: 20),
+                BiographyItemWidget(name: 'Aliases', value: biography.aliases.join(', ')),
+                const SizedBox(height: 20),
+                BiographyItemWidget(name: 'Place of birth', value: biography.placeOfBirth),
+                const SizedBox(height: 8),
+              ],
             ),
-            if (biography.alignmentInfo != null) BiographyAlignmentWidget(alignment: biography.alignmentInfo!),
-          ],
-        ),
+          ),
+          if (biography.alignmentInfo != null) BiographyAlignmentWidget(alignment: biography.alignmentInfo!),
+        ],
       ),
+    );
+  }
+}
+
+class BiographyItemWidget extends StatelessWidget {
+  final String name;
+  final String value;
+
+  const BiographyItemWidget({
+    super.key,
+    required this.name,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          name.toUpperCase(),
+          style: const TextStyle(
+            color: SuperheroesColors.textGrey,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: SuperheroesColors.text,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -447,7 +467,7 @@ class BiographyAlignmentWidget extends StatelessWidget {
             color: alignment.color,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
-              bottomRight: Radius.circular(20),
+              bottomRight: Radius.circular(16),
             ),
           ),
           child: Text(
@@ -461,48 +481,6 @@ class BiographyAlignmentWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class BiographyItemWidget extends StatelessWidget {
-  final String name;
-  final String value;
-
-  const BiographyItemWidget({
-    super.key,
-    required this.name,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name.toUpperCase(),
-                style: const TextStyle(
-                  color: SuperheroesColors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  color: SuperheroesColors.text,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

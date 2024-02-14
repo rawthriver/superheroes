@@ -10,7 +10,12 @@ class SuperheroesList extends StatelessWidget {
   final Stream<List<SuperheroInfo>> stream;
   final bool swipeEnabled;
 
-  const SuperheroesList({super.key, required this.title, required this.stream, this.swipeEnabled = false});
+  const SuperheroesList({
+    super.key,
+    required this.title,
+    required this.stream,
+    this.swipeEnabled = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +67,8 @@ class ListTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Dismissible(
           key: ValueKey(hero.id),
-          background: const DismissWidget(alignment: Alignment.centerLeft),
-          secondaryBackground: const DismissWidget(alignment: Alignment.centerRight),
+          background: const DismissWidget(isLeft: true),
+          secondaryBackground: const DismissWidget(isLeft: false),
           onDismissed: (_) => bloc.removeSuperhero(hero.id),
           child: card,
         ),
@@ -77,11 +82,11 @@ class ListTile extends StatelessWidget {
 }
 
 class DismissWidget extends StatelessWidget {
-  final Alignment alignment;
+  final bool isLeft;
 
   const DismissWidget({
     super.key,
-    required this.alignment,
+    required this.isLeft,
   });
 
   @override
@@ -89,13 +94,14 @@ class DismissWidget extends StatelessWidget {
     return Container(
       height: 70,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-      alignment: alignment,
+      alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
       decoration: const BoxDecoration(
         // borderRadius: BorderRadius.circular(8),
         color: SuperheroesColors.red,
       ),
       child: Text(
         'Remove\nfrom\nfavorites'.toUpperCase(),
+        textAlign: isLeft ? TextAlign.left : TextAlign.right,
         style: const TextStyle(
           fontWeight: FontWeight.w700,
           fontSize: 12,
