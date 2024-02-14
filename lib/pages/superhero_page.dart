@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:superheroes/blocs/superhero_bloc.dart';
+import 'package:superheroes/exception/api_exception.dart';
 import 'package:superheroes/model/alignment_info.dart';
 import 'package:superheroes/model/biography.dart';
 import 'package:superheroes/model/powerstats.dart';
@@ -12,6 +13,8 @@ import 'package:superheroes/model/superhero.dart';
 import 'package:superheroes/resources/superheroes_colors.dart';
 import 'package:superheroes/resources/superheroes_icons.dart';
 import 'package:superheroes/resources/superheroes_images.dart';
+import 'package:superheroes/widgets/info_with_button.dart';
+import 'package:superheroes/widgets/loading.dart';
 
 class SuperheroPage extends StatefulWidget {
   final http.Client? client;
@@ -50,6 +53,32 @@ class SuperheroPageContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of<SuperheroBloc>(context, listen: false);
+    return StreamBuilder<SuperheroPageState>(
+      stream: bloc.observeSuperheroPageState(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+        final state = snapshot.data!;
+        switch (state) {
+          case SuperheroPageState.loading:
+            return const LoadingWidget();
+          case SuperheroPageState.error:
+            return const LoadingErrorWidget();
+          case SuperheroPageState.loaded:
+            return const SuperheroWidget();
+        }
+      },
+    );
+  }
+}
+
+class SuperheroWidget extends StatelessWidget {
+  const SuperheroWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = Provider.of<SuperheroBloc>(context, listen: false);
     return StreamBuilder<Superhero>(
       stream: bloc.observeSuperhero(),
       builder: (context, snapshot) {
@@ -77,13 +106,86 @@ class SuperheroPageContent extends StatelessWidget {
   }
 }
 
+class LoadingWidget extends StatelessWidget {
+  const LoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const CustomScrollView(
+      slivers: [
+        EmptyAppBar(),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              SizedBox(height: 60),
+              LoadingIndicator(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LoadingErrorWidget extends StatelessWidget {
+  const LoadingErrorWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final SuperheroBloc bloc = Provider.of<SuperheroBloc>(context);
+    return CustomScrollView(
+      slivers: [
+        const EmptyAppBar(),
+        SliverToBoxAdapter(
+          child: Column(
+            children: [
+              const SizedBox(height: 60),
+              StreamBuilder(
+                stream: bloc.errorSubject,
+                builder: (context, snapshot) => InfoWithButton(
+                  title: snapshot.hasData && snapshot.data is ApiException
+                      ? (snapshot.data as ApiException).message
+                      : 'Error happened',
+                  subtitle: 'Please, try again',
+                  buttonText: 'Retry',
+                  assetImage: SuperheroesImages.loadingError,
+                  imageWidth: 126,
+                  imageHeight: 106,
+                  imageTopPadding: 22,
+                  action: bloc.retry,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class EmptyAppBar extends StatelessWidget {
+  const EmptyAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SliverAppBar(
+      // stretch: true,
+      pinned: true,
+      floating: true,
+      // expandedHeight: 348,
+      backgroundColor: SuperheroesColors.background,
+      foregroundColor: SuperheroesColors.text,
+    );
+  }
+}
+
 class SuperheroAppBar extends StatelessWidget {
+  final Superhero hero;
+
   const SuperheroAppBar({
     super.key,
     required this.hero,
   });
-
-  final Superhero hero;
 
   @override
   Widget build(BuildContext context) {
